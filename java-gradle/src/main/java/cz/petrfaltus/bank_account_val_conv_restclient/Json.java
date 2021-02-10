@@ -32,6 +32,7 @@ public class Json {
     private static final long METHOD_IBAN_TO_LOCAL_NUMBERING_NUMBER = 2;
     private static final long METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3;
     private static final long METHOD_BANK_CODE_VALID_NUMBER = 4;
+    private static final long METHOD_LOCAL_NUMBERING_TO_IBAN_NUMBER = 5;
 
     private static String lastErrorString;
 
@@ -186,6 +187,45 @@ public class Json {
                 retData = new DataBank();
                 retData.bank_name = (String) data.get(BANK_NAME);
                 retData.bank_swift = (String) data.get(BANK_SWIFT);
+            } else {
+                lastErrorString = (String) jsonObject.get(ERROR_STRING);
+            }
+        } catch (ParseException pe) {
+            retData = null;
+        } catch (NullPointerException npe) {
+            retData = null;
+        }
+
+        return retData;
+    }
+
+    public static String codeQueryLocalNumberingToIban(String account_number, String country) {
+        JSONObject obj = new JSONObject();
+        obj.put(METHOD_NUMBER, METHOD_LOCAL_NUMBERING_TO_IBAN_NUMBER);
+        obj.put(ACCOUNT_NUMBER, account_number);
+        obj.put(COUNTRY, country);
+
+        String retString = objToString(obj);
+
+        return retString;
+    }
+
+    public static DataIban decodeResultLocalNumberingToIban(String resultJson) {
+        DataIban retData = null;
+        lastErrorString = null;
+
+        try {
+            JSONParser parser = new JSONParser();
+
+            JSONObject jsonObject = (JSONObject) parser.parse(resultJson);
+            long errorCode = (long) jsonObject.get(ERROR_CODE);
+
+            if (errorCode == 0) {
+                JSONObject data = (JSONObject) jsonObject.get(DATA);
+
+                retData = new DataIban();
+                retData.iban = (String) data.get(IBAN);
+                retData.iban_human = (String) data.get(IBAN_HUMAN);
             } else {
                 lastErrorString = (String) jsonObject.get(ERROR_STRING);
             }
