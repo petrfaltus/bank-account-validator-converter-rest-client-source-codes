@@ -43,6 +43,42 @@ public class Program {
         for (Map.Entry<String, String> oneCountryEntry: countriesEntrySet) {
             out.println(" - " + oneCountryEntry.getKey() + " ... " + oneCountryEntry.getValue());
         }
+
+        out.println();
+
+        // IBAN validation and to local numbering query conversion
+        out.println("IBAN validation and to local numbering conversion:");
+
+        String iban = "CZ6508000000192000145399";
+        String country = "cz"; // returned in the all supported countries request
+
+        String requestJsonIbanToLocalNumbering = Json.codeQueryIbanToLocalNumbering(iban, country);
+        if (requestJsonIbanToLocalNumbering == null) {
+            out.println(" - " + MESSAGE_ERROR_CODING_JSON);
+            return;
+        }
+        String replyJsonIbanToLocalNumbering = Web.request(requestJsonIbanToLocalNumbering);
+        if (replyJsonIbanToLocalNumbering == null) {
+            out.println(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+            return;
+        }
+        DataLocalNumbering dataLocalNumbering = Json.decodeResultIbanToLocalNumbering(replyJsonIbanToLocalNumbering);
+        if (dataLocalNumbering == null) {
+            String errorString = Json.getLastErrorString();
+
+            if (errorString != null) {
+                out.println(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString);
+            } else {
+                out.println(" - " + MESSAGE_ERROR_DECODING_JSON);
+            }
+
+            return;
+        }
+
+        out.println(" - IBAN human: " + dataLocalNumbering.iban_human);
+        out.println(" - account number identificator: " + dataLocalNumbering.account_number_identificator);
+        out.println(" - bank code: " + dataLocalNumbering.bank_code);
+        out.println(" - account number: " + dataLocalNumbering.account_number);
     }
 
 }
