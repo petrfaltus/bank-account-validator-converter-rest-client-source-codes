@@ -27,6 +27,7 @@ public class Json {
 
     private static final long METHOD_COUNTRIES_NUMBER = 1;
     private static final long METHOD_IBAN_TO_LOCAL_NUMBERING_NUMBER = 2;
+    private static final long METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3;
 
     private static String lastErrorString;
 
@@ -117,6 +118,41 @@ public class Json {
         }
 
         return retData;
+    }
+
+    public static String codeQueryLocalNumberIdentificatorValid(String account_number_identificator, String country) {
+        JSONObject obj = new JSONObject();
+        obj.put(METHOD_NUMBER, METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER);
+        obj.put(ACCOUNT_NUMBER_IDENTIFICATOR, account_number_identificator);
+        obj.put(COUNTRY, country);
+
+        String retString = objToString(obj);
+
+        return retString;
+    }
+
+    public static boolean decodeResultLocalNumberIdentificatorValid(String resultJson) {
+        boolean retValue = false;
+        lastErrorString = null;
+
+        try {
+            JSONParser parser = new JSONParser();
+
+            JSONObject jsonObject = (JSONObject) parser.parse(resultJson);
+            long errorCode = (long) jsonObject.get(ERROR_CODE);
+
+            if (errorCode == 0) {
+                retValue = true;
+            } else {
+                lastErrorString = (String) jsonObject.get(ERROR_STRING);
+            }
+        } catch (ParseException pe) {
+            retValue = false;
+        } catch (NullPointerException npe) {
+            retValue = false;
+        }
+
+        return retValue;
     }
 
     public static String getLastErrorString() {

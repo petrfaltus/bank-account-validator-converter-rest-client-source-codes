@@ -79,6 +79,39 @@ public class Program {
         out.println(" - account number identificator: " + dataLocalNumbering.account_number_identificator);
         out.println(" - bank code: " + dataLocalNumbering.bank_code);
         out.println(" - account number: " + dataLocalNumbering.account_number);
+
+        out.println();
+
+        // Local account number identificator validation
+        out.println("Local account number identificator validation:");
+
+        String account_number_identificator = "19-2000145399";
+        country = "cz"; // returned in the all supported countries request
+
+        String requestJsonLocalNumberIdentificatorValid = Json.codeQueryLocalNumberIdentificatorValid(account_number_identificator, country);
+        if (requestJsonLocalNumberIdentificatorValid == null) {
+            out.println(" - " + MESSAGE_ERROR_CODING_JSON);
+            return;
+        }
+        String replyJsonLocalNumberIdentificatorValid = Web.request(requestJsonLocalNumberIdentificatorValid);
+        if (replyJsonLocalNumberIdentificatorValid == null) {
+            out.println(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+            return;
+        }
+        boolean localNumberIdentificatorValid = Json.decodeResultLocalNumberIdentificatorValid(replyJsonLocalNumberIdentificatorValid);
+        if (localNumberIdentificatorValid == false) {
+            String errorString = Json.getLastErrorString();
+
+            if (errorString != null) {
+                out.println(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString);
+            } else {
+                out.println(" - " + MESSAGE_ERROR_DECODING_JSON);
+            }
+
+            return;
+        }
+
+        out.println(" - VALID!");
     }
 
 }
