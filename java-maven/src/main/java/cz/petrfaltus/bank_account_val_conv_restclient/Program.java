@@ -13,7 +13,7 @@ public class Program {
     public static final String MESSAGE_RECEIVED_ERROR = "received error";
 
     public static void main(String[] args) {
-        // all countries query
+        // all supported countries query
         out.println("All supported countries:");
 
         String requestJsonCountries = Json.codeQueryCountries();
@@ -42,12 +42,12 @@ public class Program {
         Set<Map.Entry<String, String>> countriesEntrySet = countries.entrySet();
 
         for (Map.Entry<String, String> oneCountryEntry: countriesEntrySet) {
-            out.println(" - " + oneCountryEntry.getKey() + " ... " + oneCountryEntry.getValue());
+            out.println(" - " + oneCountryEntry.getKey() + " (" + oneCountryEntry.getValue() + ")");
         }
 
         out.println();
 
-        // IBAN validation and to local numbering query conversion
+        // IBAN validation and to local numbering conversion query
         out.println("IBAN validation and to local numbering conversion:");
 
         String iban = "CZ6508000000192000145399";
@@ -83,7 +83,7 @@ public class Program {
 
         out.println();
 
-        // Local account number identificator validation
+        // local account number identificator validation query
         out.println("Local account number identificator validation:");
 
         String account_number_identificator = "19-2000145399";
@@ -116,7 +116,7 @@ public class Program {
 
         out.println();
 
-        // Bank code validation and query
+        // bank code validation and query
         out.println("Bank code validation and query:");
 
         String bank_code = "0800";
@@ -150,7 +150,7 @@ public class Program {
 
         out.println();
 
-        // Local numbering to IBAN conversion
+        // local numbering to IBAN conversion query
         out.println("Local numbering to IBAN conversion:");
 
         String account_number = "19-2000145399/0800"; // must be already valid (validated before)
@@ -184,8 +184,8 @@ public class Program {
 
         out.println();
 
-        // Bank query
-        out.println("Bank query:");
+        // one bank query
+        out.println("One bank query:");
 
         String query = "česká";
         country = "cz"; // returned in the all supported countries request
