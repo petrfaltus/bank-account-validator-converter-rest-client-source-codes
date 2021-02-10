@@ -146,6 +146,40 @@ public class Program {
 
         out.println(" - bank name: " + dataBank.bank_name);
         out.println(" - bank swift: " + dataBank.bank_swift);
+
+        out.println();
+
+        // Local numbering to IBAN conversion
+        out.println("Local numbering to IBAN conversion:");
+
+        String account_number = "19-2000145399/0800"; // must be already valid (validated before)
+        country = "cz"; // returned in the all supported countries request
+
+        String requestJsonLocalNumberingToIban = Json.codeQueryLocalNumberingToIban(account_number, country);
+        if (requestJsonLocalNumberingToIban == null) {
+            out.println(" - " + MESSAGE_ERROR_CODING_JSON);
+            return;
+        }
+        String replyJsonLocalNumberingToIban = Web.request(requestJsonLocalNumberingToIban);
+        if (replyJsonLocalNumberingToIban == null) {
+            out.println(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+            return;
+        }
+        DataIban dataIban = Json.decodeResultLocalNumberingToIban(replyJsonLocalNumberingToIban);
+        if (dataIban == null) {
+            String errorString = Json.getLastErrorString();
+
+            if (errorString != null) {
+                out.println(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString);
+            } else {
+                out.println(" - " + MESSAGE_ERROR_DECODING_JSON);
+            }
+
+            return;
+        }
+
+        out.println(" - IBAN: " + dataIban.iban);
+        out.println(" - IBAN human: " + dataIban.iban_human);
     }
 
 }
