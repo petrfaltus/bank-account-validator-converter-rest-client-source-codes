@@ -112,6 +112,40 @@ public class Program {
         }
 
         out.println(" - VALID!");
+
+        out.println();
+
+        // Bank code validation and query
+        out.println("Bank code validation and query:");
+
+        String bank_code = "0800";
+        country = "cz"; // returned in the all supported countries request
+
+        String requestJsonBankCodeValid = Json.codeQueryBankCodeValid(bank_code, country);
+        if (requestJsonBankCodeValid == null) {
+            out.println(" - " + MESSAGE_ERROR_CODING_JSON);
+            return;
+        }
+        String replyJsonBankCodeValid = Web.request(requestJsonBankCodeValid);
+        if (replyJsonBankCodeValid == null) {
+            out.println(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+            return;
+        }
+        DataBank dataBank = Json.decodeResultBankCodeValid(replyJsonBankCodeValid);
+        if (dataBank == null) {
+            String errorString = Json.getLastErrorString();
+
+            if (errorString != null) {
+                out.println(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString);
+            } else {
+                out.println(" - " + MESSAGE_ERROR_DECODING_JSON);
+            }
+
+            return;
+        }
+
+        out.println(" - bank name: " + dataBank.bank_name);
+        out.println(" - bank swift: " + dataBank.bank_swift);
     }
 
 }

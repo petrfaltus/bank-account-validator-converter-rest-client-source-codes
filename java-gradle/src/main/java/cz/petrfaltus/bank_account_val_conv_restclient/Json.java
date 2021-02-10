@@ -25,9 +25,13 @@ public class Json {
     private static final String BANK_CODE = "bank_code";
     private static final String ACCOUNT_NUMBER = "account_number";
 
+    private static final String BANK_NAME = "bank_name";
+    private static final String BANK_SWIFT = "bank_swift";
+
     private static final long METHOD_COUNTRIES_NUMBER = 1;
     private static final long METHOD_IBAN_TO_LOCAL_NUMBERING_NUMBER = 2;
     private static final long METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3;
+    private static final long METHOD_BANK_CODE_VALID_NUMBER = 4;
 
     private static String lastErrorString;
 
@@ -153,6 +157,45 @@ public class Json {
         }
 
         return retValue;
+    }
+
+    public static String codeQueryBankCodeValid(String bank_code, String country) {
+        JSONObject obj = new JSONObject();
+        obj.put(METHOD_NUMBER, METHOD_BANK_CODE_VALID_NUMBER);
+        obj.put(BANK_CODE, bank_code);
+        obj.put(COUNTRY, country);
+
+        String retString = objToString(obj);
+
+        return retString;
+    }
+
+    public static DataBank decodeResultBankCodeValid(String resultJson) {
+        DataBank retData = null;
+        lastErrorString = null;
+
+        try {
+            JSONParser parser = new JSONParser();
+
+            JSONObject jsonObject = (JSONObject) parser.parse(resultJson);
+            long errorCode = (long) jsonObject.get(ERROR_CODE);
+
+            if (errorCode == 0) {
+                JSONObject data = (JSONObject) jsonObject.get(DATA);
+
+                retData = new DataBank();
+                retData.bank_name = (String) data.get(BANK_NAME);
+                retData.bank_swift = (String) data.get(BANK_SWIFT);
+            } else {
+                lastErrorString = (String) jsonObject.get(ERROR_STRING);
+            }
+        } catch (ParseException pe) {
+            retData = null;
+        } catch (NullPointerException npe) {
+            retData = null;
+        }
+
+        return retData;
     }
 
     public static String getLastErrorString() {
