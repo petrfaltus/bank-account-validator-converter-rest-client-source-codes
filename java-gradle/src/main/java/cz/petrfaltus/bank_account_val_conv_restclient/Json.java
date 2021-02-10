@@ -3,8 +3,12 @@ package cz.petrfaltus.bank_account_val_conv_restclient;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import org.json.simple.parser.JSONParser;
@@ -15,6 +19,7 @@ public class Json {
 
     private static final String IBAN = "iban";
     private static final String COUNTRY = "country";
+    private static final String QUERY = "query";
 
     private static final String ERROR_CODE = "error_code";
     private static final String ERROR_STRING = "error_string";
@@ -33,6 +38,7 @@ public class Json {
     private static final long METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3;
     private static final long METHOD_BANK_CODE_VALID_NUMBER = 4;
     private static final long METHOD_LOCAL_NUMBERING_TO_IBAN_NUMBER = 5;
+    private static final long METHOD_BANK_QUERY_NUMBER = 6;
 
     private static String lastErrorString;
 
@@ -236,6 +242,55 @@ public class Json {
         }
 
         return retData;
+    }
+
+    public static String codeQueryBankQuery(String query, String country) {
+        JSONObject obj = new JSONObject();
+        obj.put(METHOD_NUMBER, METHOD_BANK_QUERY_NUMBER);
+        obj.put(QUERY, query);
+        obj.put(COUNTRY, country);
+
+        String retString = objToString(obj);
+
+        return retString;
+    }
+
+    public static List<OneBank> decodeResultBankQuery(String resultJson) {
+        List<OneBank> retList = null;
+        lastErrorString = null;
+
+        try {
+            JSONParser parser = new JSONParser();
+
+            JSONObject jsonObject = (JSONObject) parser.parse(resultJson);
+            long errorCode = (long) jsonObject.get(ERROR_CODE);
+
+            if (errorCode == 0) {
+                JSONArray data = (JSONArray) jsonObject.get(DATA);
+
+                retList = new ArrayList<OneBank>();
+
+                Iterator<JSONObject> di = data.iterator();
+                while (di.hasNext()) {
+                    JSONObject jsonObjectNext = di.next();
+
+                    OneBank oneBank = new OneBank();
+                    oneBank.bank_code = (String) jsonObjectNext.get(BANK_CODE);
+                    oneBank.bank_name = (String) jsonObjectNext.get(BANK_NAME);
+                    oneBank.bank_swift = (String) jsonObjectNext.get(BANK_SWIFT);
+
+                    retList.add(oneBank);
+                }
+            } else {
+                lastErrorString = (String) jsonObject.get(ERROR_STRING);
+            }
+        } catch (ParseException pe) {
+            retList = null;
+        } catch (NullPointerException npe) {
+            retList = null;
+        }
+
+        return retList;
     }
 
     public static String getLastErrorString() {

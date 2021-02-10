@@ -1,5 +1,6 @@
 package cz.petrfaltus.bank_account_val_conv_restclient;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -180,6 +181,45 @@ public class Program {
 
         out.println(" - IBAN: " + dataIban.iban);
         out.println(" - IBAN human: " + dataIban.iban_human);
+
+        out.println();
+
+        // Bank query
+        out.println("Bank query:");
+
+        String query = "česká";
+        country = "cz"; // returned in the all supported countries request
+
+        String requestJsonBankQuery = Json.codeQueryBankQuery(query, country);
+        if (requestJsonBankQuery == null) {
+            out.println(" - " + MESSAGE_ERROR_CODING_JSON);
+            return;
+        }
+        String replyJsonBankQuery = Web.request(requestJsonBankQuery);
+        if (replyJsonBankQuery == null) {
+            out.println(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+            return;
+        }
+        List<OneBank> replyBanks = Json.decodeResultBankQuery(replyJsonBankQuery);
+        if (replyBanks == null) {
+            String errorString = Json.getLastErrorString();
+
+            if (errorString != null) {
+                out.println(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString);
+            } else {
+                out.println(" - " + MESSAGE_ERROR_DECODING_JSON);
+            }
+
+            return;
+        }
+
+        for (OneBank replyBank: replyBanks) {
+            out.println(" - bank code: " + replyBank.bank_code);
+            out.println(" - bank name: " + replyBank.bank_name);
+            out.println(" - bank SWIFT: " + replyBank.bank_swift);
+
+            out.println();
+        }
     }
 
 }
