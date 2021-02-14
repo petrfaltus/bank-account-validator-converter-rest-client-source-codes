@@ -110,6 +110,40 @@ namespace BankAccountValConvRestClient
             }
 
             Console.WriteLine(" - VALID!");
+
+            Console.WriteLine();
+
+            // bank code validation and query
+            Console.WriteLine("Bank code validation and query:");
+
+            RestRequest4 restRequest4 = new RestRequest4();
+            restRequest4.bank_code = "0800";
+            restRequest4.country = "cz"; // returned in the all supported countries request
+
+            string restRequestJsonBankCodeValid = JsonConvert.SerializeObject(restRequest4);
+
+            string restReplyJsonBankCodeValid;
+            try
+            {
+                restReplyJsonBankCodeValid = Web.Request(restRequestJsonBankCodeValid);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+                return;
+            }
+
+            RestReply4 restReply4 = JsonConvert.DeserializeObject<RestReply4>(restReplyJsonBankCodeValid);
+
+            if (restReply4.error_code != 0)
+            {
+                Console.WriteLine(" - " + MESSAGE_RECEIVED_ERROR + ": " + restReply4.error_string);
+                return;
+            }
+
+            DataBank dataBank = restReply4.data;
+            Console.WriteLine(" - bank name: " + dataBank.bank_name);
+            Console.WriteLine(" - bank swift: " + dataBank.bank_swift);
         }
     }
 }
