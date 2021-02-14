@@ -178,6 +178,45 @@ namespace BankAccountValConvRestClient
             DataIban dataIban = restReply5.data;
             Console.WriteLine(" - IBAN: " + dataIban.iban);
             Console.WriteLine(" - IBAN human: " + dataIban.iban_human);
+
+            Console.WriteLine();
+
+            // one bank query
+            Console.WriteLine("One bank query:");
+
+            RestRequest6 restRequest6 = new RestRequest6();
+            restRequest6.query = "česká";
+            restRequest6.country = "cz"; // returned in the all supported countries request
+
+            string restRequestJsonBankquery = JsonConvert.SerializeObject(restRequest6);
+
+            string restReplyJsonBankquery;
+            try
+            {
+                restReplyJsonBankquery = Web.Request(restRequestJsonBankquery);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+                return;
+            }
+
+            RestReply6 restReply6 = JsonConvert.DeserializeObject<RestReply6>(restReplyJsonBankquery);
+
+            if (restReply6.error_code != 0)
+            {
+                Console.WriteLine(" - " + MESSAGE_RECEIVED_ERROR + ": " + restReply6.error_string);
+                return;
+            }
+
+            foreach(DataOneBank replyBank in restReply6.data)
+            {
+                Console.WriteLine(" - bank code: " + replyBank.bank_code);
+                Console.WriteLine(" - bank name: " + replyBank.bank_name);
+                Console.WriteLine(" - bank SWIFT: " + replyBank.bank_swift);
+
+                Console.WriteLine();
+            }
         }
     }
 }
