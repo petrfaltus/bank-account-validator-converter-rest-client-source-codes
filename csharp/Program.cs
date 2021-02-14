@@ -144,6 +144,40 @@ namespace BankAccountValConvRestClient
             DataBank dataBank = restReply4.data;
             Console.WriteLine(" - bank name: " + dataBank.bank_name);
             Console.WriteLine(" - bank swift: " + dataBank.bank_swift);
+
+            Console.WriteLine();
+
+            // local numbering to IBAN conversion query
+            Console.WriteLine("Local numbering to IBAN conversion:");
+
+            RestRequest5 restRequest5 = new RestRequest5();
+            restRequest5.account_number = "19-2000145399/0800"; // must be already valid (validated before)
+            restRequest5.country = "cz"; // returned in the all supported countries request
+
+            string restRequestJsonLocalNumberingToIban = JsonConvert.SerializeObject(restRequest5);
+
+            string restReplyJsonLocalNumberingToIban;
+            try
+            {
+                restReplyJsonLocalNumberingToIban = Web.Request(restRequestJsonLocalNumberingToIban);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+                return;
+            }
+
+            RestReply5 restReply5 = JsonConvert.DeserializeObject<RestReply5>(restReplyJsonLocalNumberingToIban);
+
+            if (restReply5.error_code != 0)
+            {
+                Console.WriteLine(" - " + MESSAGE_RECEIVED_ERROR + ": " + restReply5.error_string);
+                return;
+            }
+
+            DataIban dataIban = restReply5.data;
+            Console.WriteLine(" - IBAN: " + dataIban.iban);
+            Console.WriteLine(" - IBAN human: " + dataIban.iban_human);
         }
     }
 }
