@@ -40,7 +40,7 @@ namespace BankAccountValConvRestClient
 
             foreach(KeyValuePair<string, string> country in restReply1.data)
             {
-                Console.WriteLine(" - " + country.Key + " ... " + country.Value);
+                Console.WriteLine(" - " + country.Key + " (" + country.Value + ")");
             }
 
             Console.WriteLine();
