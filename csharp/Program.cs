@@ -78,6 +78,38 @@ namespace BankAccountValConvRestClient
             Console.WriteLine(" - account number identificator: " + dataLocalNumbering.account_number_identificator);
             Console.WriteLine(" - bank code: " + dataLocalNumbering.bank_code);
             Console.WriteLine(" - account number: " + dataLocalNumbering.account_number);
+
+            Console.WriteLine();
+
+            // local account number identificator validation query
+            Console.WriteLine("Local account number identificator validation:");
+
+            RestRequest3 restRequest3 = new RestRequest3();
+            restRequest3.account_number_identificator = "19-2000145399";
+            restRequest3.country = "cz"; // returned in the all supported countries request
+
+            string restRequestJsonLocalNumberIdentificatorValid = JsonConvert.SerializeObject(restRequest3);
+
+            string restReplyJsonLocalNumberIdentificatorValid;
+            try
+            {
+                restReplyJsonLocalNumberIdentificatorValid = Web.Request(restRequestJsonLocalNumberIdentificatorValid);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine(" - " + MESSAGE_ERROR_CONTACTING_SERVICE);
+                return;
+            }
+
+            RestReply3 restReply3 = JsonConvert.DeserializeObject<RestReply3>(restReplyJsonLocalNumberIdentificatorValid);
+
+            if (restReply3.error_code != 0)
+            {
+                Console.WriteLine(" - " + MESSAGE_RECEIVED_ERROR + ": " + restReply3.error_string);
+                return;
+            }
+
+            Console.WriteLine(" - VALID!");
         }
     }
 }
