@@ -87,4 +87,40 @@ echo " - account number identificator: ".$replyLocalNumbering[tJson::ACCOUNT_NUM
 echo " - bank code: ".$replyLocalNumbering[tJson::BANK_CODE].PHP_EOL;
 echo " - account number: ".$replyLocalNumbering[tJson::ACCOUNT_NUMBER].PHP_EOL;
 
+echo PHP_EOL;
+
+// local account number identificator validation query
+echo "Local account number identificator validation:".PHP_EOL;
+
+$account_number_identificator = "19-2000145399";
+$country = "cz"; // returned in the all supported countries request
+
+$requestJsonLocalNumberIdentificatorValid = tJson::codeQueryLocalNumberIdentificatorValid($account_number_identificator, $country);
+
+$replyJsonLocalNumberIdentificatorValid = tWeb::request($requestJsonLocalNumberIdentificatorValid);
+if ($replyJsonLocalNumberIdentificatorValid === null)
+{
+  echo " - ".MESSAGE_ERROR_CONTACTING_SERVICE.PHP_EOL;
+  return;
+}
+
+$replyValid = tJson::decodeResultLocalNumberIdentificatorValid($replyJsonLocalNumberIdentificatorValid);
+if ($replyValid === false)
+{
+  $errorString = tJson::getLastErrorString();
+
+  if ($errorString != null)
+  {
+    echo " - ".MESSAGE_RECEIVED_ERROR.": ".$errorString.PHP_EOL;
+  }
+  else
+  {
+    echo " - ".MESSAGE_ERROR_DECODING_JSON.PHP_EOL;
+  }
+
+  return;
+}
+
+echo " - VALID!".PHP_EOL;
+
 ?>
