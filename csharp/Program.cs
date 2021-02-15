@@ -40,7 +40,7 @@ namespace BankAccountValConvRestClient
 
             foreach(KeyValuePair<string, string> country in restReply1.data)
             {
-                Console.WriteLine(" - " + country.Key + " ... " + country.Value);
+                Console.WriteLine(" - " + country.Key + " (" + country.Value + ")");
             }
 
             Console.WriteLine();
@@ -209,13 +209,19 @@ namespace BankAccountValConvRestClient
                 return;
             }
 
+            int totalItems = 0;
             foreach(DataOneBank replyBank in restReply6.data)
             {
+                if (totalItems > 0)
+                {
+                    Console.WriteLine();
+                }
+
                 Console.WriteLine(" - bank code: " + replyBank.bank_code);
                 Console.WriteLine(" - bank name: " + replyBank.bank_name);
                 Console.WriteLine(" - bank SWIFT: " + replyBank.bank_swift);
 
-                Console.WriteLine();
+                totalItems++;
             }
         }
     }

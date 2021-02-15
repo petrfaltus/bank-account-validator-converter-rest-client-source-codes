@@ -213,12 +213,18 @@ public class Program {
             return;
         }
 
+        int totalItems = 0;
         for (OneBank replyBank: replyBanks) {
+            if (totalItems > 0)
+            {
+                out.println();
+            }
+
             out.println(" - bank code: " + replyBank.bank_code);
             out.println(" - bank name: " + replyBank.bank_name);
             out.println(" - bank SWIFT: " + replyBank.bank_swift);
 
-            out.println();
+            totalItems++;
         }
     }
 
