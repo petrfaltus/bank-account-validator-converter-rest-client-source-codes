@@ -11,11 +11,13 @@ spl_autoload_register(function($class_name)
 });
 
 const MESSAGE_ERROR_CONTACTING_SERVICE = "error contacting the REST service";
+const MESSAGE_ERROR_DECODING_JSON = "error decoding the reply JSON";
+const MESSAGE_RECEIVED_ERROR = "received error";
 
 // all supported countries query
 echo "All supported countries:".PHP_EOL;
 
-$requestJsonCountries = "{ \"method_number\":1 }";
+$requestJsonCountries = tJson::codeQueryCountries();
 
 $replyJsonCountries = tWeb::request($requestJsonCountries);
 if ($replyJsonCountries === null)
@@ -24,6 +26,26 @@ if ($replyJsonCountries === null)
   return;
 }
 
-echo $replyJsonCountries.PHP_EOL;
+$countries = tJson::decodeResultCountries($replyJsonCountries);
+if ($countries === null)
+{
+  $errorString = tJson::getLastErrorString();
+
+  if ($errorString != null)
+  {
+    echo " - ".MESSAGE_RECEIVED_ERROR.": ".$errorString.PHP_EOL;
+  }
+  else
+  {
+    echo " - ".MESSAGE_ERROR_DECODING_JSON.PHP_EOL;
+  }
+
+  return;
+}
+
+foreach ($countries as $countryCode => $countryName)
+{
+  echo " - ".$countryCode." (".$countryName."}".PHP_EOL;
+}
 
 ?>
