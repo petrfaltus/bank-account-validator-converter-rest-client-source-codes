@@ -123,4 +123,41 @@ if ($replyValid === false)
 
 echo " - VALID!".PHP_EOL;
 
+echo PHP_EOL;
+
+// bank code validation and query
+echo "Bank code validation and query:".PHP_EOL;
+
+$bank_code = "0800";
+$country = "cz"; // returned in the all supported countries request
+
+$requestJsonBankCodeValid = tJson::codeQueryBankCodeValid($bank_code, $country);
+
+$replyJsonBankCodeValid = tWeb::request($requestJsonBankCodeValid);
+if ($replyJsonBankCodeValid === null)
+{
+  echo " - ".MESSAGE_ERROR_CONTACTING_SERVICE.PHP_EOL;
+  return;
+}
+
+$replyBank = tJson::decodeResult($replyJsonBankCodeValid);
+if ($replyBank === null)
+{
+  $errorString = tJson::getLastErrorString();
+
+  if ($errorString != null)
+  {
+    echo " - ".MESSAGE_RECEIVED_ERROR.": ".$errorString.PHP_EOL;
+  }
+  else
+  {
+    echo " - ".MESSAGE_ERROR_DECODING_JSON.PHP_EOL;
+  }
+
+  return;
+}
+
+echo " - bank name: ".$replyBank[tJson::BANK_NAME].PHP_EOL;
+echo " - bank swift: ".$replyBank[tJson::BANK_SWIFT].PHP_EOL;
+
 ?>

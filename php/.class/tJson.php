@@ -16,9 +16,13 @@ class tJson
   const BANK_CODE = "bank_code";
   const ACCOUNT_NUMBER = "account_number";
 
+  const BANK_NAME = "bank_name";
+  const BANK_SWIFT = "bank_swift";
+
   const METHOD_COUNTRIES_NUMBER = 1;
   const METHOD_IBAN_TO_LOCAL_NUMBERING_NUMBER = 2;
   const METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3;
+  const METHOD_BANK_CODE_VALID_NUMBER = 4;
 
   protected static $lastErrorString;
 
@@ -78,6 +82,17 @@ class tJson
     }
 
     return $retValue;
+  }
+  //----------------------------------------------------------------------------
+  public static function codeQueryBankCodeValid(&$bank_code, &$country)
+  {
+    $output[self::METHOD_NUMBER] = self::METHOD_BANK_CODE_VALID_NUMBER;
+    $output[self::BANK_CODE] = $bank_code;
+    $output[self::COUNTRY] = $country;
+
+    $outputJson = json_encode($output);
+
+    return $outputJson;
   }
   //----------------------------------------------------------------------------
   public static function decodeResult(&$inputJson)
