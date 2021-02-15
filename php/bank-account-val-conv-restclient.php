@@ -160,4 +160,41 @@ if ($replyBank === null)
 echo " - bank name: ".$replyBank[tJson::BANK_NAME].PHP_EOL;
 echo " - bank swift: ".$replyBank[tJson::BANK_SWIFT].PHP_EOL;
 
+echo PHP_EOL;
+
+// local numbering to IBAN conversion query
+echo "Local numbering to IBAN conversion:".PHP_EOL;
+
+$account_number = "19-2000145399/0800"; // must be already valid (validated before)
+$country = "cz"; // returned in the all supported countries request
+
+$requestJsonLocalNumberingToIban = tJson::codeQueryLocalNumberingToIban($account_number, $country);
+
+$replyJsonLocalNumberingToIban = tWeb::request($requestJsonLocalNumberingToIban);
+if ($replyJsonLocalNumberingToIban === null)
+{
+  echo " - ".MESSAGE_ERROR_CONTACTING_SERVICE.PHP_EOL;
+  return;
+}
+
+$replyIban = tJson::decodeResult($replyJsonLocalNumberingToIban);
+if ($replyIban === null)
+{
+  $errorString = tJson::getLastErrorString();
+
+  if ($errorString != null)
+  {
+    echo " - ".MESSAGE_RECEIVED_ERROR.": ".$errorString.PHP_EOL;
+  }
+  else
+  {
+    echo " - ".MESSAGE_ERROR_DECODING_JSON.PHP_EOL;
+  }
+
+  return;
+}
+
+echo " - IBAN: ".$replyIban[tJson::IBAN].PHP_EOL;
+echo " - IBAN human: ".$replyIban[tJson::IBAN_HUMAN].PHP_EOL;
+
 ?>

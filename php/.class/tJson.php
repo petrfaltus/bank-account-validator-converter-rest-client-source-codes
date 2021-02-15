@@ -23,6 +23,7 @@ class tJson
   const METHOD_IBAN_TO_LOCAL_NUMBERING_NUMBER = 2;
   const METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3;
   const METHOD_BANK_CODE_VALID_NUMBER = 4;
+  const METHOD_LOCAL_NUMBERING_TO_IBAN_NUMBER = 5;
 
   protected static $lastErrorString;
 
@@ -88,6 +89,17 @@ class tJson
   {
     $output[self::METHOD_NUMBER] = self::METHOD_BANK_CODE_VALID_NUMBER;
     $output[self::BANK_CODE] = $bank_code;
+    $output[self::COUNTRY] = $country;
+
+    $outputJson = json_encode($output);
+
+    return $outputJson;
+  }
+  //----------------------------------------------------------------------------
+  public static function codeQueryLocalNumberingToIban(&$account_number, &$country)
+  {
+    $output[self::METHOD_NUMBER] = self::METHOD_LOCAL_NUMBERING_TO_IBAN_NUMBER;
+    $output[self::ACCOUNT_NUMBER] = $account_number;
     $output[self::COUNTRY] = $country;
 
     $outputJson = json_encode($output);
