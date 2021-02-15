@@ -197,4 +197,53 @@ if ($replyIban === null)
 echo " - IBAN: ".$replyIban[tJson::IBAN].PHP_EOL;
 echo " - IBAN human: ".$replyIban[tJson::IBAN_HUMAN].PHP_EOL;
 
+echo PHP_EOL;
+
+// one bank query
+echo "One bank query:".PHP_EOL;
+
+$query = "česká";
+$country = "cz"; // returned in the all supported countries request
+
+$requestJsonBankQuery = tJson::codeQueryBankQuery($query, $country);
+
+$replyJsonBankQuery = tWeb::request($requestJsonBankQuery);
+if ($replyJsonBankQuery === null)
+{
+  echo " - ".MESSAGE_ERROR_CONTACTING_SERVICE.PHP_EOL;
+  return;
+}
+
+$replyBanks = tJson::decodeResult($replyJsonBankQuery);
+if ($replyBanks === null)
+{
+  $errorString = tJson::getLastErrorString();
+
+  if ($errorString != null)
+  {
+    echo " - ".MESSAGE_RECEIVED_ERROR.": ".$errorString.PHP_EOL;
+  }
+  else
+  {
+    echo " - ".MESSAGE_ERROR_DECODING_JSON.PHP_EOL;
+  }
+
+  return;
+}
+
+$totalBanks = 0;
+foreach ($replyBanks as $replyOneBank)
+{
+  if ($totalBanks > 0)
+  {
+    echo PHP_EOL;
+  }
+
+  echo " - bank code: ".$replyOneBank[tJson::BANK_CODE].PHP_EOL;
+  echo " - bank name: ".$replyOneBank[tJson::BANK_NAME].PHP_EOL;
+  echo " - bank SWIFT: ".$replyOneBank[tJson::BANK_SWIFT].PHP_EOL;
+
+  $totalBanks++;
+}
+
 ?>
