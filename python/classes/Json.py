@@ -15,9 +15,13 @@ class Json:
     BANK_CODE = "bank_code"
     ACCOUNT_NUMBER = "account_number"
 
+    BANK_NAME = "bank_name"
+    BANK_SWIFT = "bank_swift"
+
     METHOD_COUNTRIES_NUMBER = 1
     METHOD_IBAN_TO_LOCAL_NUMBERING_NUMBER = 2
     METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3
+    METHOD_BANK_CODE_VALID_NUMBER = 4
 
     lastErrorString = None
 
@@ -64,6 +68,15 @@ class Json:
             retValue = False
 
         return retValue
+
+    @staticmethod
+    def codeQueryBankCodeValid(bank_code, country):
+        output = {Json.METHOD_NUMBER: Json.METHOD_BANK_CODE_VALID_NUMBER,
+                  Json.BANK_CODE: bank_code,
+                  Json.COUNTRY: country}
+        outputJson = json.dumps(output)
+
+        return outputJson
 
     @staticmethod
     def decodeResult(inputJson):

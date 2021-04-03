@@ -90,3 +90,33 @@ if replyValid == False:
     exit()
 
 print(" - VALID!")
+
+print()
+
+# bank code validation and query
+print("Bank code validation and query:")
+
+bank_code = "0800"
+country = "cz" # returned in the all supported countries request
+
+requestJsonBankCodeValid = Json.codeQueryBankCodeValid(bank_code, country)
+
+try:
+    replyJsonBankCodeValid = Web.request(requestJsonBankCodeValid)
+except:
+    print(" - " + MESSAGE_ERROR_CONTACTING_SERVICE)
+    exit()
+
+replyBank = Json.decodeResult(replyJsonBankCodeValid)
+if replyBank == None:
+    errorString = Json.getLastErrorString()
+
+    if errorString != None:
+        print(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString)
+    else:
+        print(" - " + MESSAGE_ERROR_DECODING_JSON)
+
+    exit()
+
+print(" - bank name: " + replyBank[Json.BANK_NAME])
+print(" - bank swift: " + replyBank[Json.BANK_SWIFT])
