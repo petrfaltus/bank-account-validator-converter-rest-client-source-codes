@@ -150,3 +150,41 @@ if replyIban == None:
 
 print(" - IBAN: " + replyIban[Json.IBAN])
 print(" - IBAN human: " + replyIban[Json.IBAN_HUMAN])
+
+print()
+
+# one bank query
+print("One bank query:")
+
+query = "česká"
+country = "cz" # returned in the all supported countries request
+
+requestJsonBankQuery = Json.codeQueryBankQuery(query, country)
+
+try:
+    replyJsonBankQuery = Web.request(requestJsonBankQuery)
+except:
+    print(" - " + MESSAGE_ERROR_CONTACTING_SERVICE)
+    exit()
+
+replyBanks = Json.decodeResult(replyJsonBankQuery)
+if replyBanks == None:
+    errorString = Json.getLastErrorString()
+
+    if errorString != None:
+        print(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString)
+    else:
+        print(" - " + MESSAGE_ERROR_DECODING_JSON)
+
+    exit()
+
+totalBanks = 0
+for replyOneBank in replyBanks:
+    if totalBanks > 0:
+        print()
+
+    print(" - bank code: " + replyOneBank[Json.BANK_CODE])
+    print(" - bank name: " + replyOneBank[Json.BANK_NAME])
+    print(" - bank SWIFT: " + replyOneBank[Json.BANK_SWIFT])
+
+    totalBanks = totalBanks + 1

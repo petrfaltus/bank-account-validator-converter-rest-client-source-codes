@@ -5,6 +5,7 @@ class Json:
 
     IBAN = "iban"
     COUNTRY = "country"
+    QUERY = "query"
 
     ERROR_CODE = "error_code"
     ERROR_STRING = "error_string"
@@ -23,6 +24,7 @@ class Json:
     METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3
     METHOD_BANK_CODE_VALID_NUMBER = 4
     METHOD_LOCAL_NUMBERING_TO_IBAN_NUMBER = 5
+    METHOD_BANK_QUERY_NUMBER = 6
 
     lastErrorString = None
 
@@ -83,6 +85,15 @@ class Json:
     def codeQueryLocalNumberingToIban(account_number, country):
         output = {Json.METHOD_NUMBER: Json.METHOD_LOCAL_NUMBERING_TO_IBAN_NUMBER,
                   Json.ACCOUNT_NUMBER: account_number,
+                  Json.COUNTRY: country}
+        outputJson = json.dumps(output)
+
+        return outputJson
+
+    @staticmethod
+    def codeQueryBankQuery(query, country):
+        output = {Json.METHOD_NUMBER: Json.METHOD_BANK_QUERY_NUMBER,
+                  Json.QUERY: query,
                   Json.COUNTRY: country}
         outputJson = json.dumps(output)
 
