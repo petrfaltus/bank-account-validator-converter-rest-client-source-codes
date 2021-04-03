@@ -17,6 +17,7 @@ class Json:
 
     METHOD_COUNTRIES_NUMBER = 1
     METHOD_IBAN_TO_LOCAL_NUMBERING_NUMBER = 2
+    METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER = 3
 
     lastErrorString = None
 
@@ -35,6 +36,34 @@ class Json:
         outputJson = json.dumps(output)
 
         return outputJson
+
+    @staticmethod
+    def codeQueryLocalNumberIdentificatorValid(account_number_identificator, country):
+        output = {Json.METHOD_NUMBER: Json.METHOD_LOCAL_NUMBER_IDENTIFICATOR_VALID_NUMBER,
+                  Json.ACCOUNT_NUMBER_IDENTIFICATOR: account_number_identificator,
+                  Json.COUNTRY: country}
+        outputJson = json.dumps(output)
+
+        return outputJson
+
+    @staticmethod
+    def decodeResultLocalNumberIdentificatorValid(inputJson):
+        retValue = False
+        Json.lastErrorString = None
+
+        try:
+            input = json.loads(inputJson)
+
+            if input[Json.ERROR_CODE] == 0:
+                retValue = True
+            else:
+                # error reported by the service
+                Json.lastErrorString = input[Json.ERROR_STRING]
+        except:
+            # invalid or corrupted JSON
+            retValue = False
+
+        return retValue
 
     @staticmethod
     def decodeResult(inputJson):

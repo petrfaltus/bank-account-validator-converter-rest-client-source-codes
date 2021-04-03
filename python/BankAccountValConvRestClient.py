@@ -61,3 +61,32 @@ print(" - IBAN human: " + replyLocalNumbering[Json.IBAN_HUMAN])
 print(" - account number identificator: " + replyLocalNumbering[Json.ACCOUNT_NUMBER_IDENTIFICATOR])
 print(" - bank code: " + replyLocalNumbering[Json.BANK_CODE])
 print(" - account number: " + replyLocalNumbering[Json.ACCOUNT_NUMBER])
+
+print()
+
+# local account number identificator validation query
+print("Local account number identificator validation:")
+
+account_number_identificator = "19-2000145399"
+country = "cz" # returned in the all supported countries request
+
+requestJsonLocalNumberIdentificatorValid = Json.codeQueryLocalNumberIdentificatorValid(account_number_identificator, country)
+
+try:
+    replyJsonLocalNumberIdentificatorValid = Web.request(requestJsonLocalNumberIdentificatorValid)
+except:
+    print(" - " + MESSAGE_ERROR_CONTACTING_SERVICE)
+    exit()
+
+replyValid = Json.decodeResultLocalNumberIdentificatorValid(replyJsonLocalNumberIdentificatorValid)
+if replyValid == False:
+    errorString = Json.getLastErrorString()
+
+    if errorString != None:
+        print(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString)
+    else:
+        print(" - " + MESSAGE_ERROR_DECODING_JSON)
+
+    exit()
+
+print(" - VALID!")
