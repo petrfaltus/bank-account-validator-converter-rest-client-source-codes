@@ -120,3 +120,33 @@ if replyBank == None:
 
 print(" - bank name: " + replyBank[Json.BANK_NAME])
 print(" - bank swift: " + replyBank[Json.BANK_SWIFT])
+
+print()
+
+# local numbering to IBAN conversion query
+print("Local numbering to IBAN conversion:")
+
+account_number = "19-2000145399/0800" # must be already valid (validated before)
+country = "cz" # returned in the all supported countries request
+
+requestJsonLocalNumberingToIban = Json.codeQueryLocalNumberingToIban(account_number, country)
+
+try:
+    replyJsonLocalNumberingToIban = Web.request(requestJsonLocalNumberingToIban)
+except:
+    print(" - " + MESSAGE_ERROR_CONTACTING_SERVICE)
+    exit()
+
+replyIban = Json.decodeResult(replyJsonLocalNumberingToIban)
+if replyIban == None:
+    errorString = Json.getLastErrorString()
+
+    if errorString != None:
+        print(" - " + MESSAGE_RECEIVED_ERROR + ": " + errorString)
+    else:
+        print(" - " + MESSAGE_ERROR_DECODING_JSON)
+
+    exit()
+
+print(" - IBAN: " + replyIban[Json.IBAN])
+print(" - IBAN human: " + replyIban[Json.IBAN_HUMAN])
